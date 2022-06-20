@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>AgencyAnalytics Crawler Coding Challenge</title>
+<link rel="stylesheet" href="main.css"/>
+<link rel="stylesheet" href="include/jQCloud/jqcloud.min.css"/>
+<script type="text/javascript" src="include/jQuery/jquery-3.6.0.js"></script>
+<script src="include/jQCloud/jqcloud.min.js"></script>
+<script  language="javascript" type="text/javascript">
+
+    $(document).ready(function () 
+                      {
+                        $("#webaddr").keyup(
+                                            function (e) 
+                                            {
+                                               if (e.keyCode === 13) 
+                                               {
+                                                  start_crawl($('#webaddr').val(),$('#parseimg').prop('checked'));
+                                               }
+                                            }
+                                            );
+                      });
+    
+    
+    function start_crawl(url,img_hash)
+    {
+       
+       $("#blackout").show();
+       $("#loading").show();
+       
+       $.ajax({
+           url: "crawl.php",
+           cache: false,
+           method: "POST",
+           data: {
+                   url: url,
+                   img_hash: img_hash
+                 }                              
+         }
+        )
+        .done(function(result) {                                       
+                                 $("#loading").hide();
+                                 $("#blackout").hide();
+    
+                                 $("#results").html(result);
+                                 $("#results").show();
+                              
+                               }
+             )
+             
+        .fail(function( jqXHR, textStatus ) {
+                                             $("#loading").hide();
+                                             $("#blackout").hide();
+                                             alert( "Request failed: " + textStatus );
+                                             }            
+     );  
+    }
+                                 
+</script>
+</head>
+
+<body onload='$("#webaddr").focus().val("").val("https://agencyanalytics.com");'>
+  <div id="main_page">
+     <div id="main_header">
+        <div style="display: table-cell; position: relative; width: 20%; text-align: center;">
+           <img src="images/lucas_the_spider.png"/ style="position: relative; bottom: 0; width: 100%;">
+        </div>
+        <div style="display: table-cell; position: absolute; overflow: auto;">
+           <font size="+3">Crawler Coding Challenge</font>
+           <p/>Please enter a URL to crawl:
+           <input id="webaddr" type="text" size="120" maxlength="300" tabindex="1" style="width:80%" value="https://agencyanalytics.com"/>
+           <img src="images/submit.png" style="width: 15px; align: top; cursor: pointer;" onclick="start_crawl($('#webaddr').val(),$('#parseimg').prop('checked'));"/>
+           <br/><input id="parseimg" type="checkbox"/> Parse images for uniqueness (longer execution time)
+           <p />Note: Only requests to the domains <b>www.agencyanalytics.com</b> or <b>agencyanalytics.com</b> are allowed.
+           <br/><font size="-2">Created by Jamie Ruszkowski</font>
+           <br /><font size="-2">Famous Image of Lucas the Spider, Created by Joshua Slice</font>
+        </div>
+     </div>
+     <div id="results">
+     </div>
+  </div>
+  <div id="loading" style="position: absolute; display: none; z-index: 10; top: 50%; left: 50%; transform: translate(-50%,-50%); ">  
+     <img src="images/loading.gif" width="50px" />
+  </div>
+  <div id="blackout" style="position: absolute; display: none; z-index: 5; left: 0; top: 0; width: 100%; height: 100%; background-color: black; opacity: 50%;"></div>
+  
+</body>
+</html>
